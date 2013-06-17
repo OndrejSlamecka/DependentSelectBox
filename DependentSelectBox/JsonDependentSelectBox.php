@@ -35,7 +35,7 @@ class JsonDependentSelectBox extends DependentSelectBox
 	public static function tryJsonResponse(Presenter $presenter) {
 		if(empty(self::$jsonResoponseItems))
 			return;
-		
+
 		$payload = array(
 			"type" => "JsonDependentSelectBoxResponse",
 			"items" => array()
@@ -63,10 +63,7 @@ class JsonDependentSelectBox extends DependentSelectBox
 	}
 
 	public static function register($methodName = "addJsonDependentSelectBox") {
-		if(NETTE_PACKAGE == 'PHP 5.2')
-			FormContainer::extensionMethod("FormContainer::$methodName", array("JsonDependentSelectBox", "Container_prototype_addJsonDependentSelectBox"));
-		else
-			FormContainer::extensionMethod($methodName, "DependentSelectBox\JsonDependentSelectBox::Container_prototype_addJsonDependentSelectBox");
+		FormContainer::extensionMethod($methodName, "DependentSelectBox\JsonDependentSelectBox::Container_prototype_addJsonDependentSelectBox");
 	}
-	
+
 }

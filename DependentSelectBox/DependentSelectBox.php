@@ -269,7 +269,7 @@ class DependentSelectBox extends SelectBox {
 						throw new InvalidArgumentException("When using 'autoSelectRootFirstItem = true', parent must be instance of SelectBox !");
 					$items = $parent->getItems();
 					if(!empty($items)) {
-						if($parent->areKeysUsed())
+						//if($parent->areKeysUsed())
 							$items = array_keys($items);
 						$parent->setValue(reset($items));
 					}
@@ -407,10 +407,7 @@ class DependentSelectBox extends SelectBox {
 	}
 
 	public static function register($methodName = "addDependentSelectBox") {
-		if(NETTE_PACKAGE == 'PHP 5.2')
-			FormContainer::extensionMethod("FormContainer::$methodName", array("DependentSelectBox", "Container_prototype_addDependentSelectBox"));
-		else
-			FormContainer::extensionMethod($methodName, "DependentSelectBox\DependentSelectBox::Container_prototype_addDependentSelectBox");
+		FormContainer::extensionMethod($methodName, "DependentSelectBox\DependentSelectBox::Container_prototype_addDependentSelectBox");
 	}
 
 // </editor-fold>

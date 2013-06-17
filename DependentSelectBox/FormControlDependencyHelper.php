@@ -210,7 +210,7 @@ class FormControlDependencyHelper extends Object {
 	}
 
 	public function getContainerClass() {
-		return NETTE_PACKAGE == "PHP 5.2" ? "FormContainer" : "Nette\Forms\Container";
+		return "Nette\Forms\Container";
 	}
 // </editor-fold>
 
