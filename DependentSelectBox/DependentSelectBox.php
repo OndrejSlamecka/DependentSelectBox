@@ -28,7 +28,7 @@ class DependentSelectBox extends SelectBox {
 	/** @var Title for disabled value */
 	public static $disabledItemTitle = "x x x x x";
 	/** @var Select first item for root SelectBox ? */
-	public $autoSelectRootFirstItem = true;
+	public static $autoSelectRootFirstItem = true;
 
 	/** @var array(SelectBox|DependentSelectBox) Form control/s on which is this DependentSelectBox attached */
 	protected $parents;
@@ -262,7 +262,7 @@ class DependentSelectBox extends SelectBox {
 	 * Test whenever $this->autoSelectRootFirstItem is true and if parent is root SelectBox, select first item
 	 */
 	protected function autoSelectRootFirstItem() {
-		if($this->autoSelectRootFirstItem) {
+		if(self::$autoSelectRootFirstItem) {
 			foreach($this->parents as $parent) {
 				if($this->isRoot($parent) && $parent->getValue() === null) {
 					if(!($parent instanceof SelectBox))
