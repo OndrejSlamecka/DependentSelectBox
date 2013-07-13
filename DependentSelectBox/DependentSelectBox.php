@@ -244,9 +244,7 @@ class DependentSelectBox extends SelectBox
 	{
 		if($control instanceof FormControlDependencyHelper)
 			return $control;
-		$fcdh = new FormControlDependencyHelper($control);
-		$fcdh->setButtonText("Load");
-		return $fcdh;
+		return new FormControlDependencyHelper($control);
 	}
 
 	/**
@@ -406,6 +404,5 @@ class DependentSelectBox extends SelectBox
 			return $obj[$name] = new DependentSelectBox($label, $parents, $dataCallback);
 		});
 	}
-
 
 }

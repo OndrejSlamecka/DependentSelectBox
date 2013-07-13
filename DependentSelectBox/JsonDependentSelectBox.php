@@ -61,4 +61,5 @@ class JsonDependentSelectBox extends DependentSelectBox
 			return $obj[$name] = new JsonDependentSelectBox($label, $parents, $dataCallback);
 		});
 	}
+
 }
