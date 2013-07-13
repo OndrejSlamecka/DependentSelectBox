@@ -30,8 +30,6 @@ class DependentSelectBox extends SelectBox
 	public static $emptyValueTitle = "- - - - -";
 	/** @var Title for disabled value */
 	public static $disabledItemTitle = "x x x x x";
-	/** @var Select first item for root SelectBox ? */
-	public static $autoSelectRootFirstItem = true;
 
 	/** @var array(SelectBox|DependentSelectBox) Form control/s on which is this DependentSelectBox attached */
 	protected $parents;
@@ -215,13 +213,6 @@ class DependentSelectBox extends SelectBox
 		$this->refresh(false, false);
 	}
 
-	/**
-	 * @return SelectBox[]|DependentSelectBox[]
-	 */
-	/*public function getDependentParents()
-	{
-		return $this->parents;
-	}*/
 
 
 	/**
@@ -269,19 +260,16 @@ class DependentSelectBox extends SelectBox
 
 
 	/**
-	 * Test whenever $this->autoSelectRootFirstItem is true and if parent is root SelectBox, select first item
+	 * Auto-select first item if
 	 */
 	protected function autoSelectRootFirstItem()
 	{
-		if(self::$autoSelectRootFirstItem) {
-			foreach($this->parents as $parent) {
-				if($this->isRoot($parent) && $parent->getValue() === null) {
-					if(!($parent instanceof SelectBox))
-						throw new InvalidArgumentException("When using 'autoSelectRootFirstItem = true', parent must be instance of SelectBox !");
+		foreach($this->parents as $parent) {
+			if($this->isRoot($parent) && $parent->getValue() === null) {
+				if ($parent instanceof SelectBox && $parent->getPrompt() === FALSE) {
 					$items = $parent->getItems();
 					if(!empty($items)) {
-						//if($parent->areKeysUsed())
-							$items = array_keys($items);
+						$items = array_keys($items);
 						$parent->setValue(reset($items));
 					}
 				}
