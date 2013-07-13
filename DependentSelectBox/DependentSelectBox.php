@@ -10,13 +10,17 @@ namespace DependentSelectBox;
 use Nette\Forms\Controls\SelectBox,
 	InvalidArgumentException,
 	LogicException,
+	Nette\Forms\Controls\SubmitButton,
  	Nette\NotSupportedException,
-	Nette\Forms\Container as FormContainer;
+	Nette\Forms\Container as FormContainer,
+	Nette\Forms\Controls\BaseControl as FormControl;
 
 
 
 class DependentSelectBox extends SelectBox
 {
+	const BUTTON_SUFFIX = '_submit';
+	const CONTROL_CLASS = 'dependentControl';
 
 	/** @var boolean "Disable" child DependentSelectBox-es or select 1st value? (Disabling does not effect validation) */
 	public static $disableChildren = true;
@@ -65,8 +69,7 @@ class DependentSelectBox extends SelectBox
 
 		$this->parents = $parents = is_array($parents) ? $parents : array($parents);
 		foreach($parents as $parent) {
-			$dependencyHelper = $this->createDependencyHelper($parent);
-			$dependencyHelper->addOnChangeCallback(array($this, "submitButtonHandler"));
+			$this->attachHelperSubmit($parent);
 
 			if($parent instanceof DependentSelectBox)
 				$parent->children[] = $this;
@@ -74,6 +77,36 @@ class DependentSelectBox extends SelectBox
 				throw new NotSupportedException('When first item on root is skipped, $disableChildren = false cant be used !');
 		}
 	}
+
+
+	/**
+	 * Attaches helper submit to the parent of dependent selectbox for loading dependent selectbox's items
+	 * @param  FormControl $control
+	 */
+	public function attachHelperSubmit(FormControl $control)
+	{
+		$control->getControlPrototype()->class(self::CONTROL_CLASS); // Set class to recognize the parent on the client
+
+		$container = $control->lookup('Nette\Forms\Container');
+		if($container === NULL) {
+			throw new InvalidArgumentException('Attach your form to the component hierarchy.');
+		}
+
+		// Create helper
+		$button = new SubmitButton('Load');
+
+		// Attach
+		$buttonName = $control->getName() . self::BUTTON_SUFFIX;
+		$container->addComponent($button, $buttonName);
+
+		// Set attributes
+		$button->setValidationScope(FALSE);
+		$button->getControlPrototype()->class(self::CONTROL_CLASS . self::BUTTON_SUFFIX);
+		$button->getControlPrototype()->id($button->getHtmlId());
+
+		$button->onClick[] = array($this, 'submitButtonHandler');
+	}
+
 
 	/**
 	 * This method will be called when the component becomes attached to Form.
@@ -234,18 +267,6 @@ class DependentSelectBox extends SelectBox
 		}
 	}
 
-
-	/**
-	 * Create helper which creates submit buttons
-	 * @param FormControl $control
-	 * @return FormControlDependencyHelper
-	 */
-	protected function createDependencyHelper($control)
-	{
-		if($control instanceof FormControlDependencyHelper)
-			return $control;
-		return new FormControlDependencyHelper($control);
-	}
 
 	/**
 	 * Test whenever $this->autoSelectRootFirstItem is true and if parent is root SelectBox, select first item
