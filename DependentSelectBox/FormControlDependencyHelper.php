@@ -23,10 +23,6 @@ class FormControlDependencyHelper extends \Nette\Object
 	public $control;
 	/** @var String Html class of control*/
 	protected $controlClass;
-	/** @var int Button-s position */
-	protected $buttonPosition;
-	/** @var SubmitButton Created SubmitButton */
-	protected $button = null;
 
 	protected $container;
 
@@ -55,21 +51,26 @@ class FormControlDependencyHelper extends \Nette\Object
 	public function addOnChangeCallback($callback)
 	{
 		$this->control->getControlPrototype()->class($this->controlClass); // Mark parent as the deciding control
-		$this->createButton();
-
-		// Attach button
-		$buttonName = $this->control->getName() . self::$buttonSuffix;
-		$this->container->addComponent($this->button, $buttonName);
-
-		$this->button->onClick[] = $callback;
+		$button = $this->createButton();
+		$button->onClick[] = $callback;
 	}
 
 
 	public function createButton()
 	{
-		$this->button = new SubmitButton('Load');
-		$this->button->setValidationScope(FALSE);
-		$this->button->getControlPrototype()->class($this->controlClass . self::$buttonSuffix);
+		// Create
+		$button = new SubmitButton('Load');
+
+		// Attach
+		$buttonName = $this->control->getName() . self::$buttonSuffix;
+		$this->container->addComponent($button, $buttonName);
+
+		// Set attributes
+		$button->setValidationScope(FALSE);
+		$button->getControlPrototype()->class($this->controlClass . self::$buttonSuffix);
+		$button->getControlPrototype()->id($button->getHtmlId());
+
+		return $button;
 	}
 
 }
