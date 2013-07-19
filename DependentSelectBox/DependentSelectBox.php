@@ -400,9 +400,12 @@ class DependentSelectBox extends SelectBox
 	 */
 	protected function setFirstItemSelected()
 	{
-		$keys = array_keys($this->getItems());
-		$key = reset($keys);
-		$this->setValue($key, false);
+		$items = $this->getItems();
+		if (!empty($items)) {
+			$keys = array_keys($items);
+			$key = reset($keys);
+			$this->setValue($key, false);
+		}
 	}
 
 
